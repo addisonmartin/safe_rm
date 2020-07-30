@@ -9,7 +9,8 @@ SAFE_FILES_OR_PATHS = [
   '~/Pictures',
   '~/Videos',
   '~/RubymineProjects',
-  '~/RubymineProjects/ShareTheFood'
+  '~/RubymineProjects/ShareTheFood',
+  '~/RubymineProjects/safe_rm'
 ].freeze
 
 # Process each argument passed into safe_rm as either an option or file/path to delete.
@@ -60,6 +61,6 @@ rm << ' ' << combined_options
 combined_files_or_paths = files_or_paths.join(' ')
 rm << ' ' << combined_files_or_paths
 
-# Execute the potentially modified rm command.
+# Execute the, potentially modified, rm command.
 # `#{rm}`
 puts rm
