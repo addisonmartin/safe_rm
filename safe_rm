@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+
+PATHS_TO_PROMPT_FOR = [
+  '~',
+  ''
+].freeze
+
+options = []
+files = []
+ARGV.each do |arg|
+  # https://www.gnu.org/software/coreutils/manual/html_node/rm-invocation.html#rm-invocation
+  # IF --, ALL REMAINING OPTIONS ARE NON ARGUMENTS!
+  if arg.start_with?('--')
+    files << arg
+    # Otherwise, if an argument begins with -, it must be an option to pass to rm.
+  elsif arg.start_with?('-')
+    options << arg
+  else
+    files << arg
+  end
+end
+
+
