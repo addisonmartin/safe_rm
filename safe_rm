@@ -62,5 +62,5 @@ combined_files_or_paths = files_or_paths.join(' ')
 rm << ' ' << combined_files_or_paths
 
 # Execute the, potentially modified, rm command.
-# `#{rm}`
-puts rm
+`#{rm}`
+# puts rm
