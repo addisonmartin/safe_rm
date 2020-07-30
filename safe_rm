@@ -1,12 +1,13 @@
 #!/usr/bin/env ruby
 
-PATHS_TO_PROMPT_FOR = [
+SAFE_FILES_AND_PATHS = [
   '~',
   ''
 ].freeze
 
 options = []
 files = []
+
 ARGV.each do |arg|
   # https://www.gnu.org/software/coreutils/manual/html_node/rm-invocation.html#rm-invocation
   # IF --, ALL REMAINING OPTIONS ARE NON ARGUMENTS!
@@ -20,4 +21,12 @@ ARGV.each do |arg|
   end
 end
 
-
+# Checks if any of the file arguments passed to safe_rm are included in the safe list, ie, the user should be prompted before deleting them.
+files.each do |file|
+  if SAFE_FILES_AND_PATHS.include?(file)
+    # The -i argument tells the rm command to prompt before deleting each file.
+    # https://www.gnu.org/software/coreutils/manual/html_node/rm-invocation.html#rm-invocation
+    options << '-i'
+    break
+  end
+end
