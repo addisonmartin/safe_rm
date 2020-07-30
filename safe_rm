@@ -1,43 +1,62 @@
 #!/usr/bin/env ruby
 
-SAFE_FILES_AND_PATHS = [
+# The list of files/paths that should be prompted about before removing.
+SAFE_FILES_OR_PATHS = [
+  '/',
   '~',
-  '/'
+  '~/Documents',
+  '~/Desktop',
+  '~/Pictures',
+  '~/Videos',
+  '~/RubymineProjects',
+  '~/RubymineProjects/ShareTheFood'
 ].freeze
 
+# Process each argument passed into safe_rm as either an option or file/path to delete.
 options = []
 files_or_paths = []
 
-ARGV.each do |arg|
+ARGV.each_with_index do |arg, index|
+  # If the -- argument is passed in, then all remaining arguments are to be considered files/paths, not options.
   # https://www.gnu.org/software/coreutils/manual/html_node/rm-invocation.html#rm-invocation
-  # IF --, ALL REMAINING OPTIONS ARE NON ARGUMENTS!
-  if arg.start_with?('--')
-    files_or_paths << arg
-    # Otherwise, if an argument begins with -, it must be an option to pass to rm.
+  if arg == '--'
+    # Add the -- argument.
+    options << arg
+    # Add all remaining arguments as files/paths.
+    remaining_args = ARGV.last(ARGV.length - index)
+    remaining_args.each do |remaining_arg|
+      files_or_paths << remaining_arg
+    end
+    # Leave the loop, as all other arguments have been processed.
+    break
+
+  # Otherwise, if an argument begins with -, it must be an option.
   elsif arg.start_with?('-')
     options << arg
+
+  # Otherwise it must be a file/path to delete.
   else
     files_or_paths << arg
   end
 end
 
-# Checks if any of the file arguments passed to safe_rm are included in the safe list, ie, the user should be prompted before deleting them.
+# Checks if any of the file/path arguments passed to safe_rm are included in the safe list, ie, the user should be prompted before they are deleted.
 files_or_paths.each do |file_or_path|
-  if SAFE_FILES_AND_PATHS.include?(file_or_path)
+  if SAFE_FILES_OR_PATHS.include?(file_or_path)
     # The -i argument tells the rm command to prompt before deleting each file.
     # https://www.gnu.org/software/coreutils/manual/html_node/rm-invocation.html#rm-invocation
     options << '-i'
+    # The remaining file/paths do not need to be checked, as the -i option prompts the user for each file/path to be deleted.
     break
   end
 end
 
 rm = 'rm'
 # Append the passed in options to the rm command.
-# This potentially also includes the -i option if any passed in file/path is in the safe list.
 combined_options = options.join(' ')
 rm << ' ' << combined_options
 
-# Append the passed in files.
+# Append the passed in files/paths.
 combined_files_or_paths = files_or_paths.join(' ')
 rm << ' ' << combined_files_or_paths
 
