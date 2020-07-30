@@ -2,28 +2,28 @@
 
 SAFE_FILES_AND_PATHS = [
   '~',
-  ''
+  '/'
 ].freeze
 
 options = []
-files = []
+files_or_paths = []
 
 ARGV.each do |arg|
   # https://www.gnu.org/software/coreutils/manual/html_node/rm-invocation.html#rm-invocation
   # IF --, ALL REMAINING OPTIONS ARE NON ARGUMENTS!
   if arg.start_with?('--')
-    files << arg
+    files_or_paths << arg
     # Otherwise, if an argument begins with -, it must be an option to pass to rm.
   elsif arg.start_with?('-')
     options << arg
   else
-    files << arg
+    files_or_paths << arg
   end
 end
 
 # Checks if any of the file arguments passed to safe_rm are included in the safe list, ie, the user should be prompted before deleting them.
-files.each do |file|
-  if SAFE_FILES_AND_PATHS.include?(file)
+files_or_paths.each do |file_or_path|
+  if SAFE_FILES_AND_PATHS.include?(file_or_path)
     # The -i argument tells the rm command to prompt before deleting each file.
     # https://www.gnu.org/software/coreutils/manual/html_node/rm-invocation.html#rm-invocation
     options << '-i'
@@ -31,17 +31,16 @@ files.each do |file|
   end
 end
 
-rm = "rm"
+rm = 'rm'
 # Append the passed in options to the rm command.
 # This potentially also includes the -i option if any passed in file/path is in the safe list.
-options.each do |option|
-  rm.append(" #{option}")
-end
+combined_options = options.join(' ')
+rm << ' ' << combined_options
 
 # Append the passed in files.
-files.each do |file|
-  rm.append(" #{file}")
-end
+combined_files_or_paths = files_or_paths.join(' ')
+rm << ' ' << combined_files_or_paths
 
-# Execute the modified rm command.
-`#{rm}`
+# Execute the potentially modified rm command.
+# `#{rm}`
+puts rm
