@@ -30,3 +30,18 @@ files.each do |file|
     break
   end
 end
+
+rm = "rm"
+# Append the passed in options to the rm command.
+# This potentially also includes the -i option if any passed in file/path is in the safe list.
+options.each do |option|
+  rm.append(" #{option}")
+end
+
+# Append the passed in files.
+files.each do |file|
+  rm.append(" #{file}")
+end
+
+# Execute the modified rm command.
+`#{rm}`
